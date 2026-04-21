@@ -122,19 +122,20 @@ backspaced, and retyped `ls -la`, only the executed command appears. Each entry 
 at least: the command string, a timestamp, exit status, and a truncated preview of its output. 
 Selecting one expands to show the full output before sending.
 
-**Extra Features for future versions:**
+## 6. The Agent & Its Workspace
 
-* How to group commands in the picker: by time, by session / SSH host, by time, by application, etc.
-* For text context, we can also show the user a preview of the text before sending and allow them to edit the text before sending.
+For this version, the agent harness runs inside a dedicated workspace directory on the user's machine at `$HOME/_terminal_agent_workspace/`. This is a convention-based boundary — not an OS-level sandbox — that keeps the agent's files in one well-known location, separate from the user's real projects.
 
+- **Inside the workspace,** the agent may read from the internet, do web research, create and edit files, and write, install, and execute scripts and tools.
+- **Outside the workspace,** the agent is not given access to the user's real filesystem, does not execute commands in the user's terminal session, and does not act on the user's real system.
 
-## 4. The Agent & Its Sandbox
-
-For this version, the agent runs in a **restrictive sandbox** with the following capabilities:
-
-- **Allowed:** reading from the internet, doing web research, creating files within the sandbox, writing and executing scripts within the sandbox, installing tools within the sandbox.
-- **Not allowed:** reading from or writing to the user's real filesystem, executing commands in the user's terminal session, accessing the user's shell environment, or otherwise escaping the sandbox.
-
-The sandbox is ephemeral per conversation — resetting the conversation (§4.3) also resets the sandbox state.
+The workspace is reset per conversation — resetting the conversation (§4.3) also clears `$HOME/_terminal_agent_workspace/` back to an empty state.
 
 This design is intentional: the agent is helpful for research, reproducing issues, and drafting solutions, but the user remains the one who decides what — if anything — from the agent's work gets applied to their real system. Copying a script out of the chat and running it in the terminal is a deliberate, visible action.
+
+## 7. Future Work
+
+Extra features that are out of scope for this version:
+
+* How to group commands in the picker: by time, by session / SSH host, by application, etc.
+* For text context, we can also show the user a preview of the text before sending and allow them to edit the text before sending.
